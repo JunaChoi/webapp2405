@@ -1,25 +1,16 @@
+# 설치 필요
+# pip install langchain streamlit
+
 import streamlit as st
-import requests
+from langchain_community.llms import OpenAI
 
 st.title('🍎🍐🍊 나의 AI Chat 🥝🍅🍆')
 
 openai_api_key = st.sidebar.text_input('OpenAI API Key')
 
 def generate_response(input_text):
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {openai_api_key}',
-    }
-    data = {
-        'prompt': input_text,
-        'temperature': 0.7,
-        'max_tokens': 150,
-    }
-    response = requests.post('https://api.openai.com/v1/engines/davinci/completions', json=data, headers=headers)
-    if response.status_code == 200:
-        st.info(response.json()['choices'][0]['text'])
-    else:
-        st.error('오류가 발생했습니다. OpenAI API 키를 확인해 주세요.')
+    llm = OpenAI(temperature=0.7, openai_api_key=openai_api_key, max_tokens=1000)  # max_tokens 값을 늘려 더 긴 응답을 받도록 설정
+    st.info(llm(input_text))
 
 with st.form('my_form'):
     text = st.text_area('Enter text:', '무엇을 도와드릴까요?')
